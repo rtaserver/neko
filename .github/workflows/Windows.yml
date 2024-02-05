@@ -1,4 +1,4 @@
-name: Building Neko - Linux Generic
+name: Building Neko - Windows
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
       version:
         description: 'Neko version'
         required: true
-        default: '1.0-0-beta_linux-generic'
+        default: '1.0-0-beta_Windows'
         type: string
       changelog:
         description: 'Changelog'
@@ -22,7 +22,7 @@ jobs:
     name: Build Neko - For Windows
     strategy:
       matrix:
-        dotnet-version: [ '4.7.2', '4.8' ]
+        dotnet-version: [ '4.7.x', '4.8.x' ]
 
     steps:
       - uses: actions/checkout@v4
