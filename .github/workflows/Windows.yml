@@ -1,0 +1,48 @@
+name: Building Neko - Linux Generic
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Neko version'
+        required: true
+        default: '1.0-0-beta_linux-generic'
+        type: string
+      changelog:
+        description: 'Changelog'
+        required: true
+        default: ''
+        type: string
+        
+jobs: 
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: Build Neko - For Windows
+    strategy:
+      matrix:
+        dotnet-version: [ '4.7.2', '4.8' ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup dotnet ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+          
+      # - name: Install dependencies
+      #   run: dotnet add package Newtonsoft.Json --version 12.0.1
+      
+      # You can test your matrix by printing the current dotnet version
+      - name: Display dotnet version
+        run: dotnet --version
+      - name: Build
+        run: dotnet build
+      - name: Upload dotnet test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-results-${{ matrix.dotnet-version }}
+          path: TestResults-${{ matrix.dotnet-version }}
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
