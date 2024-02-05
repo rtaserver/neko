@@ -14,33 +14,31 @@ on:
         default: ''
         type: string
         
-jobs: 
+jobs:
   build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    name: Build Neko - For Windows
+ 
+    runs-on: windows-latest
+ 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: neko-windows
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '6.0.x'          
-      # - name: Install dependencies
-      #   run: dotnet add package Newtonsoft.Json --version 12.0.1
-      
-      # You can test your matrix by printing the current dotnet version
-      - name: Display dotnet version
-        run: dotnet --version
-      - name: Build
-        working-directory: ./src
-        run: dotnet build
-      - name: Upload dotnet test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-results-${{ matrix.dotnet-version }}
-          path: TestResults-${{ matrix.dotnet-version }}
-        # Use always() to always run this step to publish test results when there are test failures
-        if: ${{ always() }}
+    - uses: actions/checkout@v1
+      with:
+        ref: neko-windows
+      name: Checkout Code
+     
+    - name: Setup MSBuild Path
+      uses: warrenbuckley/Setup-MSBuild@v1
+       
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.2
+     
+    - name: Restore NuGet Packages
+      run: nuget restore SimpleFrameworkApp.sln
+ 
+    - name: Build and Publish Web App
+      run: msbuild src/NekoForWindows.sln /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderProfile
+ 
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: published_webapp
+        path: bin\Release\Publish
