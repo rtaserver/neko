@@ -20,17 +20,12 @@ jobs:
     permissions:
       contents: write
     name: Build Neko - For Windows
-    strategy:
-      matrix:
-        dotnet-version: [ '4.7.x', '4.8.x' ]
-
     steps:
       - uses: actions/checkout@v4
-      - name: Setup dotnet ${{ matrix.dotnet-version }}
+      - name: Setup dotnet
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ matrix.dotnet-version }}
-          
+          dotnet-version: '4.7.x'          
       # - name: Install dependencies
       #   run: dotnet add package Newtonsoft.Json --version 12.0.1
       
